@@ -1,0 +1,36 @@
+﻿@page "/"
+
+<CardsContainer Cards="Cards" OnStatusUpdated="HandleStatusUpdated">
+    <CardList ListStatus="CardStatuses.Todo" />
+    <CardList ListStatus="CardStatuses.Started" />
+    <CardList ListStatus="CardStatuses.Completed" />
+</CardsContainer>
+
+<hr />
+<p>Last updated card was: <strong>@lastUpdatedCard</strong></p>
+<hr />
+
+@foreach (var task in Cards)
+{
+    <p>@task.Description - <strong>@task.Status</strong></p>
+}
+
+@code {
+    List<CardModel> Cards = new List<CardModel>();
+    string lastUpdatedCard = "";
+
+    protected override void OnInitialized()
+    {
+        Cards.Add(new CardModel { Id = 1, Description = "Finish ToDo Component", Status = CardStatuses.Todo, LastUpdated = DateTime.Now });
+        Cards.Add(new CardModel { Id = 2, Description = "Debug the GC_MINOR: (Nursery full)", Status = CardStatuses.Todo, LastUpdated = DateTime.Now });
+        Cards.Add(new CardModel { Id = 3, Description = "Make Cards Editable", Status = CardStatuses.Todo, LastUpdated = DateTime.Now });
+        Cards.Add(new CardModel { Id = 4, Description = "Make Cards Keep and Switch Positions", Status = CardStatuses.Todo, LastUpdated = DateTime.Now });
+        Cards.Add(new CardModel { Id = 5, Description = "Wrap into own component", Status = CardStatuses.Todo, LastUpdated = DateTime.Now });
+        Cards.Add(new CardModel { Id = 6, Description = "Publish to NuGet", Status = CardStatuses.Todo, LastUpdated = DateTime.Now });
+    }
+
+    void HandleStatusUpdated(CardModel updatedCard)
+    {
+        lastUpdatedCard = updatedCard.Description;
+    }
+}

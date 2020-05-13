@@ -1,0 +1,66 @@
+﻿<div class="card-status">
+    <h3>@ListStatus (@Cards.Count())</h3>
+    <ul class="dropzone @dropClass"
+        ondragstart="event.dataTransfer.setData('', event.target.id);"
+        @ondrop="HandleDrop"
+        @ondragenter="HandleDragEnter"
+        @ondragleave="HandleDragLeave"
+        @ondragover="HandleDragEnter" @ondragover:preventDefault>
+
+        @foreach (var card in Cards)
+        {
+            <Card CardModel="card" />
+        }
+
+    </ul>
+</div>
+
+@code {
+
+    [CascadingParameter] CardsContainer Container { get; set; }
+    [Parameter] public CardStatuses ListStatus { get; set; }
+    private static bool entered = false;
+    private static bool leaved = false;
+    private static int global = 0;
+
+    List<CardModel> Cards = new List<CardModel>();
+    string dropClass = "";
+
+    protected override void OnParametersSet()
+    {
+        Cards.Clear();
+        Cards.AddRange(Container.Cards.Where(x => x.Status == ListStatus));
+    }
+
+    private void HandleDragEnter()
+    {
+        if (entered) return;
+        if (ListStatus == Container.insideCard.Status) return;
+
+        dropClass = "can-drop";
+
+        entered = true;
+        leaved = false;
+
+        //System.Diagnostics.Debug.Print($"{global} enter. Enter: {entered}, Leave: {leaved}");
+        //global++;
+    }
+
+    private void HandleDragLeave()
+    {
+        if (leaved) return;
+        dropClass = "";
+        leaved = true;
+        entered = false;
+
+        //System.Diagnostics.Debug.Print($"{global} leave. Enter: {entered}, Leave: {leaved}");
+        //global++;
+    }
+
+    private async Task HandleDrop()
+    {
+        dropClass = "";
+
+        await Container.UpdateCardAsync(ListStatus);
+    }
+}

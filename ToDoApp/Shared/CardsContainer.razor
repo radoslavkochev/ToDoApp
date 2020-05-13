@@ -1,0 +1,26 @@
+﻿<div class="cards-container">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    [Parameter] public List<CardModel> Cards { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback<CardModel> OnStatusUpdated { get; set; }
+    private static int count = 0;
+
+    public CardModel insideCard { get; set; }
+
+    public async Task UpdateCardAsync(CardStatuses newStatus)
+    {
+        var task = Cards.SingleOrDefault(x => x.Id == insideCard.Id);
+
+        if (task != null)
+        {
+            task.Status = newStatus;
+            task.LastUpdated = DateTime.Now;
+            await OnStatusUpdated.InvokeAsync(insideCard);
+        }
+    }
+}

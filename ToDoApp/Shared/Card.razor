@@ -1,0 +1,14 @@
+﻿<li class="draggable" @key="CardModel.Id" draggable="true" title="@CardModel.Description" @ondragstart="@(() => HandleDragStart(CardModel))">
+    <p class="description">@CardModel.Description</p>
+    <p class="last-updated"><small>Last Updated</small> @CardModel.LastUpdated.ToString("HH:mm.ss tt")</p>
+</li>
+
+@code {
+    [CascadingParameter] CardsContainer Container { get; set; }
+    [Parameter] public CardModel CardModel { get; set; }
+
+    private void HandleDragStart(CardModel selectedCard)
+    {
+        Container.insideCard = selectedCard;
+    }
+}
